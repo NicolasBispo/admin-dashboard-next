@@ -38,6 +38,9 @@ model User {
   receivedInvites TeamInvite[]  @relation("InviteReceiver")
   teamRequests    TeamRequest[] @relation("RequestSender")
 
+  // Auditoria
+  auditLogs AuditLog[] @relation("UserAuditLogs")
+
   @@map("users")
 }
 
@@ -60,6 +63,9 @@ model Team {
   // Convites e solicitações
   invites  TeamInvite[]  @relation("TeamInvites")
   requests TeamRequest[] @relation("TeamRequests")
+
+  // Auditoria
+  auditLogs AuditLog[] @relation("TeamAuditLogs")
 
   @@map("teams")
 }
@@ -143,6 +149,26 @@ model Session {
   @@map("sessions")
 }
 
+model AuditLog {
+  id          String      @id @default(cuid())
+  userId      String
+  teamId      String?
+  action      AuditAction
+  entityType  String // "user", "team", "invite", "request"
+  entityId    String?
+  description String
+  ipAddress   String?
+  userAgent   String?
+  metadata    String? // JSON string with additional data
+  createdAt   DateTime    @default(now())
+
+  // Relacionamentos
+  user User  @relation("UserAuditLogs", fields: [userId], references: [id], onDelete: Cascade)
+  team Team? @relation("TeamAuditLogs", fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@map("audit_logs")
+}
+
 enum UserRole {
   SUPER_ADMIN
   ADMIN
@@ -161,4 +187,20 @@ enum RequestStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  INVITE_SENT
+  INVITE_ACCEPTED
+  INVITE_DECLINED
+  REQUEST_SENT
+  REQUEST_APPROVED
+  REQUEST_REJECTED
+  ROLE_CHANGED
+  STATUS_CHANGED
 }
