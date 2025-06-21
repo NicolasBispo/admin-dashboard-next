@@ -79,7 +79,7 @@ export default function LoginPage() {
             <p>Email: admin@example.com</p>
             <p>Password: admin123</p>
             <div className="pt-2 border-t">
-              <p>Don't have an account?</p>
+              <p>Don&apos;t have an account?</p>
               <a href="/signup" className="text-blue-600 hover:underline">
                 Create account
               </a>
