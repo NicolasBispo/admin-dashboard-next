@@ -7,7 +7,9 @@
     "build": "pnpm prisma generate && pnpm prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint",
-    "db:seed": "npx tsx prisma/seed.ts"
+    "db:seed": "npx tsx prisma/seed.ts",
+    "db:push": "pnpm prisma db push",
+    "db:migrate": "pnpm prisma migrate dev"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",

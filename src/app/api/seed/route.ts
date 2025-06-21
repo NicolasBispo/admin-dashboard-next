@@ -458,7 +458,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Error running seed:', error);
     return NextResponse.json(
-      { error: 'Internal server error while running seed.' },
+      { error: 'Internal server error while running seed.', details: error },
       { status: 500 }
     );
   } finally {
