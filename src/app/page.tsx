@@ -11,7 +11,14 @@ export default function HomePage() {
   useEffect(() => {
     if (!loading) {
       if (user) {
-        router.push('/dashboard');
+        // Verificar se o usuário tem um time
+        // SUPER_ADMIN pode acessar dashboard mesmo sem time
+        if (user.teamId || user.role === 'SUPER_ADMIN') {
+          router.push('/dashboard');
+        } else {
+          // Usuário sem time deve ir para signup para selecionar/criar time
+          router.push('/signup');
+        }
       } else {
         router.push('/login');
       }

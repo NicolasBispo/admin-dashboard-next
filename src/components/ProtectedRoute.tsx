@@ -7,9 +7,10 @@ import { useEffect } from 'react';
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requiredRoles?: string[];
+  requireTeam?: boolean;
 }
 
-export default function ProtectedRoute({ children, requiredRoles }: ProtectedRouteProps) {
+export default function ProtectedRoute({ children, requiredRoles, requireTeam = false }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -17,7 +18,13 @@ export default function ProtectedRoute({ children, requiredRoles }: ProtectedRou
     if (!loading && !user) {
       router.push('/login');
     }
-  }, [user, loading, router]);
+    
+    // Se requireTeam é true e o usuário não tem time, redirecionar para signup
+    // Exceto se for SUPER_ADMIN
+    if (!loading && user && requireTeam && !user.teamId && user.role !== 'SUPER_ADMIN') {
+      router.push('/signup');
+    }
+  }, [user, loading, router, requireTeam]);
 
   if (loading) {
     return (
@@ -28,6 +35,12 @@ export default function ProtectedRoute({ children, requiredRoles }: ProtectedRou
   }
 
   if (!user) {
+    return null;
+  }
+
+  // Se requireTeam é true e o usuário não tem time, não renderizar nada
+  // Exceto se for SUPER_ADMIN
+  if (requireTeam && !user.teamId && user.role !== 'SUPER_ADMIN') {
     return null;
   }
 
