@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Users, Edit, Eye, EyeOff } from 'lucide-react';
+import { Users, Edit, Eye, EyeOff, Building2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -22,10 +22,11 @@ interface User {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-}
-
-interface UserListProps {
-  teamId: string;
+  team?: {
+    id: string;
+    name: string;
+    description?: string;
+  } | null;
 }
 
 const roleLabels = {
@@ -42,7 +43,7 @@ const roleColors = {
   'USER': 'bg-gray-100 text-gray-800',
 };
 
-export default function UserList({ teamId }: UserListProps) {
+export default function TotalUserList() {
   const { user: currentUser } = useAuth();
   const queryClient = useQueryClient();
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -53,13 +54,13 @@ export default function UserList({ teamId }: UserListProps) {
     role: '',
   });
 
-  // Check if current user can edit users
-  const canEditUsers = currentUser && ['SUPER_ADMIN', 'ADMIN'].includes(currentUser.role);
+  // Check if current user can edit users (only SUPER_ADMIN)
+  const canEditUsers = currentUser && currentUser.role === 'SUPER_ADMIN';
 
   const { data: users = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['teamUsers', teamId],
+    queryKey: ['allUsers'],
     queryFn: async (): Promise<User[]> => {
-      const response = await fetch('/api/users');
+      const response = await fetch('/api/users/all');
       if (!response.ok) {
         throw new Error('Error loading users');
       }
@@ -71,7 +72,7 @@ export default function UserList({ teamId }: UserListProps) {
 
   const updateUserMutation = useMutation({
     mutationFn: async ({ userId, userData }: { userId: string; userData: { name: string; email: string; role: string } }) => {
-      const response = await fetch(`/api/users/${userId}`, {
+      const response = await fetch(`/api/users/${userId}/admin`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +88,7 @@ export default function UserList({ teamId }: UserListProps) {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['teamUsers', teamId] });
+      queryClient.invalidateQueries({ queryKey: ['allUsers'] });
       toast.success('User updated successfully!');
       setIsEditDialogOpen(false);
     },
@@ -98,7 +99,7 @@ export default function UserList({ teamId }: UserListProps) {
 
   const toggleUserStatusMutation = useMutation({
     mutationFn: async ({ userId, isActive }: { userId: string; isActive: boolean }) => {
-      const response = await fetch(`/api/users/${userId}`, {
+      const response = await fetch(`/api/users/${userId}/admin`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +115,7 @@ export default function UserList({ teamId }: UserListProps) {
       return response.json();
     },
     onSuccess: (_, { isActive }) => {
-      queryClient.invalidateQueries({ queryKey: ['teamUsers', teamId] });
+      queryClient.invalidateQueries({ queryKey: ['allUsers'] });
       toast.success(`User ${isActive ? 'activated' : 'deactivated'} successfully!`);
     },
     onError: (error: Error) => {
@@ -155,9 +156,9 @@ export default function UserList({ teamId }: UserListProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            <span>User List</span>
+            <span>All Users</span>
           </CardTitle>
-          <CardDescription>Loading users...</CardDescription>
+          <CardDescription>Loading all users...</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex justify-center py-8">
@@ -174,7 +175,7 @@ export default function UserList({ teamId }: UserListProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            <span>User List</span>
+            <span>All Users</span>
           </CardTitle>
           <CardDescription>
             <p className="text-red-600 mb-4">{error instanceof Error ? error.message : 'Unknown error'}</p>
@@ -197,10 +198,10 @@ export default function UserList({ teamId }: UserListProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            <span>User List</span>
+            <span>All Users</span>
           </CardTitle>
           <CardDescription>
-            {users.length} user{users.length !== 1 ? 's' : ''} in the team
+            {users.length} user{users.length !== 1 ? 's' : ''} across all teams
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -217,6 +218,7 @@ export default function UserList({ teamId }: UserListProps) {
                     <TableHead>Name</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Role</TableHead>
+                    <TableHead>Team</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Creation Date</TableHead>
                     <TableHead>Actions</TableHead>
@@ -229,8 +231,18 @@ export default function UserList({ teamId }: UserListProps) {
                       <TableCell>{user.email}</TableCell>
                       <TableCell>
                         <Badge className={roleColors[user.role as keyof typeof roleColors]}>
-                          {roleLabels[user.role as keyof typeof roleColors]}
+                          {roleLabels[user.role as keyof typeof roleLabels]}
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {user.team ? (
+                          <div className="flex items-center space-x-2">
+                            <Building2 className="h-4 w-4 text-blue-500" />
+                            <span className="font-medium">{user.team.name}</span>
+                          </div>
+                        ) : (
+                          <Badge variant="secondary">No Team</Badge>
+                        )}
                       </TableCell>
                       <TableCell>
                         <Badge variant={user.isActive ? "default" : "secondary"}>
@@ -275,7 +287,7 @@ export default function UserList({ teamId }: UserListProps) {
         </CardContent>
       </Card>
 
-      {/* Dialog de Edição */}
+      {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
