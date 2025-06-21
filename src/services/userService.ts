@@ -18,6 +18,31 @@ export async function getUsersByTeam(teamId: string) {
   });
 }
 
+export async function getAllUsers() {
+  return await prisma.user.findMany({
+    where: { isActive: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      isActive: true,
+      createdAt: true,
+      updatedAt: true,
+      team: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+}
+
 export async function getUserById(id: string, teamId: string) {
   return await prisma.user.findFirst({
     where: { id, teamId, isActive: true },
@@ -77,6 +102,46 @@ export async function updateUser(
 ) {
   const user = await prisma.user.findFirst({
     where: { id, teamId, isActive: true },
+  });
+  if (!user) {
+    throw new Error('User not found.');
+  }
+
+  if (data.email && data.email !== user.email) {
+    const existingUser = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+    if (existingUser) {
+      throw new Error('Email is already in use.');
+    }
+  }
+
+  return await prisma.user.update({
+    where: { id },
+    data,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      isActive: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+}
+
+export async function updateUserById(
+  id: string,
+  data: {
+    name?: string;
+    email?: string;
+    role?: UserRole;
+    isActive?: boolean;
+  }
+) {
+  const user = await prisma.user.findUnique({
+    where: { id },
   });
   if (!user) {
     throw new Error('User not found.');

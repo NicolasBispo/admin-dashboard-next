@@ -426,6 +426,10 @@ export async function canManageTeamRequests(userId: string, teamId: string): Pro
     select: { createdBy: true },
   });
 
+  console.log('chegou aqui')
+
+
+
   if (!team) {
     return false;
   }
@@ -463,6 +467,8 @@ export async function canManageTeamRequests(userId: string, teamId: string): Pro
     'Coordinator',
     'Supervisor',
   ];
+
+  console.log('userTeamRoles', userTeamRoles);
 
   // Verificar se o usuário tem algum cargo de liderança
   return userTeamRoles.some(userRole => 

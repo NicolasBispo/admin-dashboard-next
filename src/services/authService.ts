@@ -54,7 +54,10 @@ export async function login(email: string, password: string) {
       expiresAt,
     },
   });
-  return { token, expiresAt };
+  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password: _password, ...userSafe } = user;
+  return { token, expiresAt, user: userSafe };
 }
 
 export async function logout(token: string) {
@@ -105,12 +108,40 @@ export async function getSessionUser(token: string | undefined) {
               },
             },
           },
+          UserTeamRole: {
+            include: {
+              teamRole: {
+                select: {
+                  id: true,
+                  name: true,
+                  color: true,
+                  isActive: true,
+                  teamId: true,
+                },
+              },
+            },
+          },
         },
       },
     },
   });
   if (!session || session.expiresAt < new Date()) return null;
+  
+  // Filtrar apenas os teamRoles do time atual do usuário
+  const userTeamRoles = session.user.UserTeamRole.filter(
+    userTeamRole => userTeamRole.teamRole.teamId === session.user.teamId
+  );
+  
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { password: _password, ...userSafe } = session.user;
-  return userSafe;
+  const { password: _password, UserTeamRole: _userTeamRole, ...userSafe } = session.user;
+  console.log('userSafe', userSafe);
+  
+  return {
+    ...userSafe,
+    team: {
+      ...userSafe.team,
+      teamRole: userTeamRoles.find(utr => utr.teamRole.teamId === userSafe.team?.id)?.teamRole
+    },
+    teamRoles: userTeamRoles.map(utr => utr.teamRole)
+  };
 } 

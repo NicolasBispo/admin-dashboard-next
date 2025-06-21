@@ -27,8 +27,9 @@ export async function GET(
       );
     }
 
+    const canManageTeam = await canManageTeamRequests(user.id, teamId);
     // Verificar se o usuário tem permissão para gerenciar solicitações
-    if (team.creator.id !== user.id && !['SUPER_ADMIN', 'ADMIN'].includes(user.role)) {
+    if (team.creator.id !== user.id && !['SUPER_ADMIN', 'ADMIN', 'MANAGER'].includes(user.role) && !canManageTeam) {
       return NextResponse.json(
         { error: 'Access denied. You do not have permission to manage requests for this team.' },
         { status: 403 }
