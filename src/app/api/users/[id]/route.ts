@@ -12,14 +12,14 @@ export async function GET(
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Não autorizado.' },
+        { error: 'Not authorized.' },
         { status: 401 }
       );
     }
 
     if (!user.teamId) {
       return NextResponse.json(
-        { error: 'Usuário não está em um time.' },
+        { error: 'User is not in a team.' },
         { status: 400 }
       );
     }
@@ -29,17 +29,17 @@ export async function GET(
 
     if (!targetUser) {
       return NextResponse.json(
-        { error: 'Usuário não encontrado.' },
+        { error: 'User not found.' },
         { status: 404 }
       );
     }
 
     return NextResponse.json({ user: targetUser });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: errorMessage },
-      { status: errorMessage.includes('autenticado') ? 401 : 404 }
+      { status: errorMessage.includes('authenticated') ? 401 : 404 }
     );
   }
 }
@@ -54,21 +54,21 @@ export async function PUT(
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Não autorizado.' },
+        { error: 'Not authorized.' },
         { status: 401 }
       );
     }
 
     if (!['SUPER_ADMIN', 'ADMIN'].includes(user.role)) {
       return NextResponse.json(
-        { error: 'Acesso negado. Apenas administradores podem editar usuários.' },
+        { error: 'Access denied. Only administrators can edit users.' },
         { status: 403 }
       );
     }
 
     if (!user.teamId) {
       return NextResponse.json(
-        { error: 'Usuário não está em um time.' },
+        { error: 'User is not in a team.' },
         { status: 400 }
       );
     }
@@ -79,10 +79,10 @@ export async function PUT(
     const updatedUser = await updateUser(id, user.teamId, body);
     return NextResponse.json({ user: updatedUser });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: errorMessage },
-      { status: errorMessage.includes('autenticado') ? 401 : 400 }
+      { status: errorMessage.includes('authenticated') ? 401 : 400 }
     );
   }
 }
@@ -97,14 +97,14 @@ export async function DELETE(
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Não autorizado.' },
+        { error: 'Not authorized.' },
         { status: 401 }
       );
     }
 
     if (!user.teamId) {
       return NextResponse.json(
-        { error: 'Usuário não está em um time.' },
+        { error: 'User is not in a team.' },
         { status: 400 }
       );
     }
@@ -112,12 +112,12 @@ export async function DELETE(
     const { id } = await params;
     await deleteUser(id, user.teamId);
 
-    return NextResponse.json({ message: 'Usuário deletado com sucesso.' });
+    return NextResponse.json({ message: 'User deleted successfully.' });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: errorMessage },
-      { status: errorMessage.includes('autenticado') ? 401 : 400 }
+      { status: errorMessage.includes('authenticated') ? 401 : 400 }
     );
   }
 } 

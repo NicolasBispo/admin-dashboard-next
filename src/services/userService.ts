@@ -44,7 +44,7 @@ export async function createUser(data: {
     where: { email: data.email },
   });
   if (existingUser) {
-    throw new Error('Email já está em uso.');
+    throw new Error('Email is already in use.');
   }
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -79,7 +79,7 @@ export async function updateUser(
     where: { id, teamId, isActive: true },
   });
   if (!user) {
-    throw new Error('Usuário não encontrado.');
+    throw new Error('User not found.');
   }
 
   if (data.email && data.email !== user.email) {
@@ -87,7 +87,7 @@ export async function updateUser(
       where: { email: data.email },
     });
     if (existingUser) {
-      throw new Error('Email já está em uso.');
+      throw new Error('Email is already in use.');
     }
   }
 
@@ -111,7 +111,7 @@ export async function deleteUser(id: string, teamId: string) {
     where: { id, teamId, isActive: true },
   });
   if (!user) {
-    throw new Error('Usuário não encontrado.');
+    throw new Error('User not found.');
   }
 
   // Soft delete - apenas marca como inativo
@@ -139,7 +139,7 @@ export async function changePassword(
     where: { id, teamId, isActive: true },
   });
   if (!user) {
-    throw new Error('Usuário não encontrado.');
+    throw new Error('User not found.');
   }
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);

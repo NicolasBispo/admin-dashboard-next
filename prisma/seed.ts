@@ -4,9 +4,9 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Iniciando seed...');
+  console.log('🌱 Starting seed...');
 
-  // Limpar dados existentes na ordem correta (respeitando foreign keys)
+  // Clear existing data in the correct order (respecting foreign keys)
   await prisma.session.deleteMany();
   await prisma.userTeamRole.deleteMany();
   await prisma.teamRequest.deleteMany();
@@ -15,426 +15,422 @@ async function main() {
   await prisma.team.deleteMany();
   await prisma.user.deleteMany();
 
-  console.log('🗑️ Dados limpos');
+  console.log('🗑️ Data cleared');
 
-  // Criar usuário admin
+  // Create admin user
   const adminPassword = await bcrypt.hash('admin123', 10);
   const admin = await prisma.user.create({
     data: {
       email: 'admin@example.com',
       password: adminPassword,
-      name: 'Administrador',
+      name: 'Administrator',
       role: 'SUPER_ADMIN',
     },
   });
 
-  // Criar alguns times de exemplo
-  const team1 = await prisma.team.create({
+  // Create some example teams
+  const devTeam = await prisma.team.create({
     data: {
-      name: 'Time de Desenvolvimento',
-      description: 'Time responsável pelo desenvolvimento de software',
+      name: 'Development Team',
+      description: 'Team responsible for software development',
       createdBy: admin.id,
     },
   });
 
-  const team2 = await prisma.team.create({
+  const designTeam = await prisma.team.create({
     data: {
-      name: 'Time de Design',
-      description: 'Time responsável pelo design e UX',
+      name: 'Design Team',
+      description: 'Team responsible for design and UX',
       createdBy: admin.id,
     },
   });
 
-  const team3 = await prisma.team.create({
+  const marketingTeam = await prisma.team.create({
     data: {
-      name: 'Time de Marketing',
-      description: 'Time responsável pelo marketing e vendas',
+      name: 'Marketing Team',
+      description: 'Team responsible for marketing and sales',
       createdBy: admin.id,
     },
   });
 
-  // Criar cargos para o Time de Desenvolvimento
-  const devTeamRoles = await Promise.all([
+  // Create roles for Development Team
+  const devRoles = await Promise.all([
     prisma.teamRole.create({
       data: {
         name: 'Tech Lead',
         color: '#3B82F6',
-        teamId: team1.id,
+        teamId: devTeam.id,
       },
     }),
     prisma.teamRole.create({
       data: {
-        name: 'Desenvolvedor Full Stack',
+        name: 'Full Stack Developer',
         color: '#10B981',
-        teamId: team1.id,
+        teamId: devTeam.id,
       },
     }),
     prisma.teamRole.create({
       data: {
-        name: 'Desenvolvedor Frontend',
+        name: 'Frontend Developer',
         color: '#F59E0B',
-        teamId: team1.id,
+        teamId: devTeam.id,
       },
     }),
     prisma.teamRole.create({
       data: {
-        name: 'Desenvolvedor Backend',
+        name: 'Backend Developer',
         color: '#8B5CF6',
-        teamId: team1.id,
+        teamId: devTeam.id,
       },
     }),
     prisma.teamRole.create({
       data: {
         name: 'QA Engineer',
         color: '#EF4444',
-        teamId: team1.id,
+        teamId: devTeam.id,
       },
     }),
   ]);
 
-  // Criar cargos para o Time de Design
-  const designTeamRoles = await Promise.all([
+  // Create roles for Design Team
+  const designRoles = await Promise.all([
     prisma.teamRole.create({
       data: {
         name: 'Design Lead',
-        color: '#EC4899',
-        teamId: team2.id,
+        color: '#3B82F6',
+        teamId: designTeam.id,
       },
     }),
     prisma.teamRole.create({
       data: {
         name: 'UX Designer',
-        color: '#06B6D4',
-        teamId: team2.id,
+        color: '#10B981',
+        teamId: designTeam.id,
       },
     }),
     prisma.teamRole.create({
       data: {
         name: 'UI Designer',
-        color: '#84CC16',
-        teamId: team2.id,
+        color: '#F59E0B',
+        teamId: designTeam.id,
       },
     }),
     prisma.teamRole.create({
       data: {
         name: 'Product Designer',
-        color: '#F97316',
-        teamId: team2.id,
+        color: '#8B5CF6',
+        teamId: designTeam.id,
       },
     }),
   ]);
 
-  // Criar cargos para o Time de Marketing
-  const marketingTeamRoles = await Promise.all([
+  // Create roles for Marketing Team
+  const marketingRoles = await Promise.all([
     prisma.teamRole.create({
       data: {
         name: 'Marketing Manager',
-        color: '#6366F1',
-        teamId: team3.id,
+        color: '#3B82F6',
+        teamId: marketingTeam.id,
       },
     }),
     prisma.teamRole.create({
       data: {
         name: 'Digital Marketing',
-        color: '#14B8A6',
-        teamId: team3.id,
+        color: '#10B981',
+        teamId: marketingTeam.id,
       },
     }),
     prisma.teamRole.create({
       data: {
         name: 'Content Creator',
-        color: '#F43F5E',
-        teamId: team3.id,
+        color: '#F59E0B',
+        teamId: marketingTeam.id,
       },
     }),
     prisma.teamRole.create({
       data: {
         name: 'SEO Specialist',
-        color: '#A855F7',
-        teamId: team3.id,
+        color: '#8B5CF6',
+        teamId: marketingTeam.id,
       },
     }),
   ]);
 
-  // Criar usuários para o Time de Desenvolvimento
+  // Create users for Development Team
   const devUsers = await Promise.all([
     prisma.user.create({
       data: {
         email: 'techlead@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'Carlos Tech Lead',
+        name: 'Tech Lead',
         role: 'MANAGER',
-        teamId: team1.id,
+        teamId: devTeam.id,
       },
     }),
     prisma.user.create({
       data: {
         email: 'fullstack@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'Ana Full Stack',
+        name: 'Full Stack Developer',
         role: 'USER',
-        teamId: team1.id,
+        teamId: devTeam.id,
       },
     }),
     prisma.user.create({
       data: {
         email: 'frontend@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'João Frontend',
+        name: 'Frontend Developer',
         role: 'USER',
-        teamId: team1.id,
+        teamId: devTeam.id,
       },
     }),
     prisma.user.create({
       data: {
         email: 'backend@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'Maria Backend',
+        name: 'Backend Developer',
         role: 'USER',
-        teamId: team1.id,
+        teamId: devTeam.id,
       },
     }),
     prisma.user.create({
       data: {
         email: 'qa@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'Pedro QA',
+        name: 'QA Engineer',
         role: 'USER',
-        teamId: team1.id,
+        teamId: devTeam.id,
       },
     }),
   ]);
 
-  // Criar usuários para o Time de Design
+  // Create users for Design Team
   const designUsers = await Promise.all([
     prisma.user.create({
       data: {
         email: 'designlead@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'Sofia Design Lead',
+        name: 'Design Lead',
         role: 'MANAGER',
-        teamId: team2.id,
+        teamId: designTeam.id,
       },
     }),
     prisma.user.create({
       data: {
         email: 'uxdesigner@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'Lucas UX Designer',
+        name: 'UX Designer',
         role: 'USER',
-        teamId: team2.id,
+        teamId: designTeam.id,
       },
     }),
     prisma.user.create({
       data: {
         email: 'uidesigner@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'Camila UI Designer',
+        name: 'UI Designer',
         role: 'USER',
-        teamId: team2.id,
+        teamId: designTeam.id,
       },
     }),
     prisma.user.create({
       data: {
         email: 'productdesigner@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'Rafael Product Designer',
+        name: 'Product Designer',
         role: 'USER',
-        teamId: team2.id,
+        teamId: designTeam.id,
       },
     }),
   ]);
 
-  // Criar usuários para o Time de Marketing
+  // Create users for Marketing Team
   const marketingUsers = await Promise.all([
     prisma.user.create({
       data: {
         email: 'marketingmanager@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'Isabela Marketing Manager',
+        name: 'Marketing Manager',
         role: 'MANAGER',
-        teamId: team3.id,
+        teamId: marketingTeam.id,
       },
     }),
     prisma.user.create({
       data: {
         email: 'digitalmarketing@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'Gabriel Digital Marketing',
+        name: 'Digital Marketing',
         role: 'USER',
-        teamId: team3.id,
+        teamId: marketingTeam.id,
       },
     }),
     prisma.user.create({
       data: {
         email: 'contentcreator@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'Juliana Content Creator',
+        name: 'Content Creator',
         role: 'USER',
-        teamId: team3.id,
+        teamId: marketingTeam.id,
       },
     }),
     prisma.user.create({
       data: {
         email: 'seospecialist@example.com',
         password: await bcrypt.hash('user123', 10),
-        name: 'Diego SEO Specialist',
+        name: 'SEO Specialist',
         role: 'USER',
-        teamId: team3.id,
+        teamId: marketingTeam.id,
       },
     }),
   ]);
 
-  // Atribuir cargos aos usuários do Time de Desenvolvimento
+  // Assign roles to Development Team users
   await Promise.all([
     prisma.userTeamRole.create({
       data: {
         userId: devUsers[0].id,
-        teamRoleId: devTeamRoles[0].id, // Tech Lead
+        teamRoleId: devRoles[0].id,
       },
     }),
     prisma.userTeamRole.create({
       data: {
         userId: devUsers[1].id,
-        teamRoleId: devTeamRoles[1].id, // Full Stack
+        teamRoleId: devRoles[1].id,
       },
     }),
     prisma.userTeamRole.create({
       data: {
         userId: devUsers[2].id,
-        teamRoleId: devTeamRoles[2].id, // Frontend
+        teamRoleId: devRoles[2].id,
       },
     }),
     prisma.userTeamRole.create({
       data: {
         userId: devUsers[3].id,
-        teamRoleId: devTeamRoles[3].id, // Backend
+        teamRoleId: devRoles[3].id,
       },
     }),
     prisma.userTeamRole.create({
       data: {
         userId: devUsers[4].id,
-        teamRoleId: devTeamRoles[4].id, // QA
+        teamRoleId: devRoles[4].id,
       },
     }),
   ]);
 
-  // Atribuir cargos aos usuários do Time de Design
+  // Assign roles to Design Team users
   await Promise.all([
     prisma.userTeamRole.create({
       data: {
         userId: designUsers[0].id,
-        teamRoleId: designTeamRoles[0].id, // Design Lead
+        teamRoleId: designRoles[0].id,
       },
     }),
     prisma.userTeamRole.create({
       data: {
         userId: designUsers[1].id,
-        teamRoleId: designTeamRoles[1].id, // UX Designer
+        teamRoleId: designRoles[1].id,
       },
     }),
     prisma.userTeamRole.create({
       data: {
         userId: designUsers[2].id,
-        teamRoleId: designTeamRoles[2].id, // UI Designer
+        teamRoleId: designRoles[2].id,
       },
     }),
     prisma.userTeamRole.create({
       data: {
         userId: designUsers[3].id,
-        teamRoleId: designTeamRoles[3].id, // Product Designer
+        teamRoleId: designRoles[3].id,
       },
     }),
   ]);
 
-  // Atribuir cargos aos usuários do Time de Marketing
+  // Assign roles to Marketing Team users
   await Promise.all([
     prisma.userTeamRole.create({
       data: {
         userId: marketingUsers[0].id,
-        teamRoleId: marketingTeamRoles[0].id, // Marketing Manager
+        teamRoleId: marketingRoles[0].id,
       },
     }),
     prisma.userTeamRole.create({
       data: {
         userId: marketingUsers[1].id,
-        teamRoleId: marketingTeamRoles[1].id, // Digital Marketing
+        teamRoleId: marketingRoles[1].id,
       },
     }),
     prisma.userTeamRole.create({
       data: {
         userId: marketingUsers[2].id,
-        teamRoleId: marketingTeamRoles[2].id, // Content Creator
+        teamRoleId: marketingRoles[2].id,
       },
     }),
     prisma.userTeamRole.create({
       data: {
         userId: marketingUsers[3].id,
-        teamRoleId: marketingTeamRoles[3].id, // SEO Specialist
+        teamRoleId: marketingRoles[3].id,
       },
     }),
   ]);
 
-  // Criar um usuário sem time para testar convites e solicitações
+  // Create a user without a team to test invites and requests
   const userWithoutTeam = await prisma.user.create({
     data: {
       email: 'semtime@example.com',
       password: await bcrypt.hash('user123', 10),
-      name: 'Usuário Sem Time',
+      name: 'User Without Team',
       role: 'USER',
     },
   });
 
-  // Criar alguns convites de exemplo
+  // Create some example invites
   await prisma.teamInvite.create({
     data: {
-      teamId: team1.id,
+      teamId: devTeam.id,
       userId: userWithoutTeam.id,
-      invitedBy: admin.id,
-      message: 'Gostaríamos que você se juntasse ao nosso time de desenvolvimento!',
+      invitedBy: devUsers[0].id,
+      message: 'We would like you to join our development team!',
     },
   });
 
-  // Criar algumas solicitações de exemplo
+  // Create some example requests
   await prisma.teamRequest.create({
     data: {
-      teamId: team2.id,
+      teamId: designTeam.id,
       userId: userWithoutTeam.id,
-      message: 'Tenho experiência em design e gostaria de contribuir com o time!',
+      message: 'I have experience in design and would like to contribute to the team!',
     },
   });
 
   console.log('✅ Seed concluído!');
   console.log('');
-  console.log('👥 Usuários criados:');
-  console.log(`- Admin: admin@example.com / admin123`);
-  console.log('');
-  console.log('🏢 Time de Desenvolvimento:');
-  console.log(`- Tech Lead: techlead@example.com / user123`);
-  console.log(`- Full Stack: fullstack@example.com / user123`);
-  console.log(`- Frontend: frontend@example.com / user123`);
-  console.log(`- Backend: backend@example.com / user123`);
-  console.log(`- QA: qa@example.com / user123`);
-  console.log('');
-  console.log('🎨 Time de Design:');
-  console.log(`- Design Lead: designlead@example.com / user123`);
-  console.log(`- UX Designer: uxdesigner@example.com / user123`);
-  console.log(`- UI Designer: uidesigner@example.com / user123`);
-  console.log(`- Product Designer: productdesigner@example.com / user123`);
-  console.log('');
-  console.log('📢 Time de Marketing:');
-  console.log(`- Marketing Manager: marketingmanager@example.com / user123`);
-  console.log(`- Digital Marketing: digitalmarketing@example.com / user123`);
-  console.log(`- Content Creator: contentcreator@example.com / user123`);
-  console.log(`- SEO Specialist: seospecialist@example.com / user123`);
-  console.log('');
-  console.log('👤 Usuário sem time:');
-  console.log(`- semtime@example.com / user123 (tem convite e solicitação pendentes)`);
+  console.log('👥 Users created:');
+  console.log(`- admin@example.com / admin123 (Super Admin)`);
+  
+  console.log('🏢 Development Team:');
+  devUsers.forEach((user, index) => {
+    console.log(`- ${user.email} / user123 (${devRoles[index].name})`);
+  });
+  
+  console.log('🎨 Design Team:');
+  designUsers.forEach((user, index) => {
+    console.log(`- ${user.email} / user123 (${designRoles[index].name})`);
+  });
+  
+  console.log('📢 Marketing Team:');
+  marketingUsers.forEach((user, index) => {
+    console.log(`- ${user.email} / user123 (${marketingRoles[index].name})`);
+  });
+  
+  console.log('👤 User without team:');
+  console.log(`- semtime@example.com / user123 (has pending invite and request)`);
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Erro no seed:', e);
+    console.error('❌ Error in seed:', e);
     process.exit(1);
   })
   .finally(async () => {

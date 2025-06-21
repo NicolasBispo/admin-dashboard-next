@@ -12,7 +12,7 @@ export async function GET(
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Não autorizado.' },
+        { error: 'Not authorized.' },
         { status: 401 }
       );
     }
@@ -22,17 +22,15 @@ export async function GET(
 
     if (!team) {
       return NextResponse.json(
-        { error: 'Time não encontrado.' },
+        { error: 'Team not found.' },
         { status: 404 }
       );
     }
 
     // Verificar se o usuário tem permissão para gerenciar solicitações
-    const hasPermission = await canManageTeamRequests(user.id, teamId);
-    
-    if (!hasPermission) {
+    if (team.creator.id !== user.id && !['SUPER_ADMIN', 'ADMIN'].includes(user.role)) {
       return NextResponse.json(
-        { error: 'Acesso negado. Você não tem permissão para gerenciar solicitações deste time.' },
+        { error: 'Access denied. You do not have permission to manage requests for this team.' },
         { status: 403 }
       );
     }
@@ -40,7 +38,7 @@ export async function GET(
     const requests = await getTeamRequests(teamId);
     return NextResponse.json({ requests });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: errorMessage },
       { status: 500 }

@@ -19,9 +19,9 @@ export default function DashboardPage() {
   };
 
   const handleAddUserSuccess = () => {
-    // Aqui você pode adicionar lógica para atualizar a lista de usuários
-    // Por exemplo, recarregar dados ou mostrar uma notificação
-    console.log('Usuário criado com sucesso!');
+    // Here you can add logic to update the user list
+    // For example, reload data or show a notification
+    console.log('User created successfully!');
   };
 
   const handleShowUsers = () => {
@@ -50,7 +50,7 @@ export default function DashboardPage() {
                 </div>
                 <Button variant="outline" size="sm" onClick={handleLogout}>
                   <LogOut className="h-4 w-4 mr-2" />
-                  Sair
+                  Logout
                 </Button>
               </div>
             </div>
@@ -60,7 +60,7 @@ export default function DashboardPage() {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            {/* Seção de Lista de Usuários */}
+            {/* User List Section */}
             {showUserList && user?.teamId && (
               <div className="mb-6">
                 <UserList teamId={user.teamId} />
@@ -68,11 +68,11 @@ export default function DashboardPage() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-              {/* Card de Estatísticas */}
+              {/* Card of Statistics */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Total de Usuários
+                    Total of Users
                   </CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
@@ -81,17 +81,17 @@ export default function DashboardPage() {
                     {user?.team?._count?.users || 0}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Usuários ativos no time
+                    Active users in the team
                   </p>
                 </CardContent>
               </Card>
 
-              {/* Card de Ações Rápidas */}
+              {/* Card of Quick Actions */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Ações Rápidas</CardTitle>
+                  <CardTitle>Quick Actions</CardTitle>
                   <CardDescription>
-                    Gerenciar usuários do seu time
+                    Manage your team's users
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
@@ -101,7 +101,7 @@ export default function DashboardPage() {
                     onClick={handleShowUsers}
                   >
                     <Users className="h-4 w-4 mr-2" />
-                    {showUserList ? 'Ocultar Usuários' : 'Ver Usuários'}
+                    {showUserList ? 'Hide Users' : 'View Users'}
                   </Button>
                   {(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN') && (
                     <AddUserForm onSuccess={handleAddUserSuccess} />
@@ -109,12 +109,12 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
 
-              {/* Card de Informações do Time */}
+              {/* Team Information Card */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Informações do Time</CardTitle>
+                  <CardTitle>Time Information</CardTitle>
                   <CardDescription>
-                    Detalhes do seu time
+                    Details about your team
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -128,27 +128,27 @@ export default function DashboardPage() {
                             <span>{user.team.name}</span>
                           </div>
                         ) : (
-                          'Sem time'
+                          'No team'
                         )}
                       </div>
                     </div>
                     {user?.team && (
                       <div>
-                        <span className="text-sm font-medium">Descrição:</span>
+                        <span className="text-sm font-medium">Description:</span>
                         <p className="text-sm text-muted-foreground">
-                          {user.team.description || 'Sem descrição'}
+                          {user.team.description || 'No description'}
                         </p>
                       </div>
                     )}
                     <div>
-                      <span className="text-sm font-medium">Seu Cargo:</span>
+                      <span className="text-sm font-medium">Your Role:</span>
                       <p className="text-sm text-muted-foreground">
                         {user?.role}
                       </p>
                     </div>
                     {user?.team && (
                       <div>
-                        <span className="text-sm font-medium">Criado por:</span>
+                        <span className="text-sm font-medium">Created by:</span>
                         <p className="text-sm text-muted-foreground">
                           {user.team.creator.name}
                         </p>
@@ -159,21 +159,21 @@ export default function DashboardPage() {
               </Card>
             </div>
 
-            {/* Seção de Solicitações Pendentes - apenas para criadores de times */}
+            {/* Pending Requests Section - only for team creators */}
             {user?.teamId && (
               <div className="mt-6">
                 <PendingRequests teamId={user.teamId} />
               </div>
             )}
 
-            {/* Seção de Times Criados - apenas para usuários que criaram times */}
+            {/* Created Teams Section - only for users who created teams */}
             {user?.createdTeams && user.createdTeams.length > 0 && (
               <div className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Times Criados por Você</CardTitle>
+                    <CardTitle>Times Created by You</CardTitle>
                     <CardDescription>
-                      Times que você criou e gerencia
+                      Times you created and manage
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -190,7 +190,7 @@ export default function DashboardPage() {
                             </p>
                           )}
                           <p className="text-xs text-gray-500">
-                            {team._count.users} membros
+                            {team._count.users} members
                           </p>
                         </div>
                       ))}

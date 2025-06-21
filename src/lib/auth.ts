@@ -43,7 +43,7 @@ export async function getAuthenticatedUser(req: NextRequest) {
   const sessionToken = req.cookies.get('session-token')?.value;
   const user = await getSessionUser(sessionToken);
   if (!user) {
-    throw new Error('Usuário não autenticado');
+    throw new Error('User not authenticated');
   }
   return user;
 }
@@ -51,6 +51,6 @@ export async function getAuthenticatedUser(req: NextRequest) {
 export function requireRole(user: User, allowedRoles: string[]) {
   console.log('user', user);
   if (!allowedRoles.includes(user.role)) {
-    throw new Error('Acesso negado');
+    throw new Error('Access denied');
   }
 } 

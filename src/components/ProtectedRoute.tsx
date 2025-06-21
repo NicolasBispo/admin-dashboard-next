@@ -22,7 +22,7 @@ export default function ProtectedRoute({ children, requiredRoles }: ProtectedRou
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
+        <div className="text-lg">Loading...</div>
       </div>
     );
   }
@@ -34,7 +34,7 @@ export default function ProtectedRoute({ children, requiredRoles }: ProtectedRou
   if (requiredRoles && !requiredRoles.includes(user.role)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-red-600">Acesso negado</div>
+        <div className="text-lg text-red-600">Access denied</div>
       </div>
     );
   }

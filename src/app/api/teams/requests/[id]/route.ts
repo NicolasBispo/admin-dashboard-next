@@ -15,7 +15,7 @@ export async function PUT(
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Não autorizado.' },
+        { error: 'Not authorized.' },
         { status: 401 }
       );
     }
@@ -25,7 +25,7 @@ export async function PUT(
 
     if (!['approve', 'reject', 'cancel'].includes(action)) {
       return NextResponse.json(
-        { error: 'Ação inválida.' },
+        { error: 'Invalid action.' },
         { status: 400 }
       );
     }
@@ -38,7 +38,7 @@ export async function PUT(
 
     if (!teamRequest) {
       return NextResponse.json(
-        { error: 'Solicitação não encontrada.' },
+        { error: 'Request not found.' },
         { status: 404 }
       );
     }
@@ -48,7 +48,7 @@ export async function PUT(
     
     if (!hasPermission) {
       return NextResponse.json(
-        { error: 'Acesso negado. Você não tem permissão para gerenciar solicitações deste time.' },
+        { error: 'Access denied. You do not have permission to manage requests for this team.' },
         { status: 403 }
       );
     }
@@ -68,7 +68,7 @@ export async function PUT(
 
     return NextResponse.json({ result });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: errorMessage },
       { status: 500 }

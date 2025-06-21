@@ -9,18 +9,18 @@ export async function GET(req: NextRequest) {
     
     if (!user.teamId) {
       return NextResponse.json(
-        { error: 'Usuário não possui time' },
-        { status: 400 }
+        { error: 'User does not have a team' },
+        { status: 403 }
       );
     }
     
     const users = await getUsersByTeam(user.teamId);
     return NextResponse.json(users);
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: errorMessage },
-      { status: errorMessage.includes('autenticado') ? 401 : 403 }
+      { status: errorMessage.includes('authenticated') ? 401 : 403 }
     );
   }
 }
@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
     
     if (!user.teamId) {
       return NextResponse.json(
-        { error: 'Usuário não possui time' },
-        { status: 400 }
+        { error: 'User does not have a team' },
+        { status: 403 }
       );
     }
     
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     
     if (!name || !email || !password || !role) {
       return NextResponse.json(
-        { error: 'Todos os campos são obrigatórios' },
+        { error: 'All fields are required' },
         { status: 400 }
       );
     }
@@ -56,10 +56,10 @@ export async function POST(req: NextRequest) {
     
     return NextResponse.json(newUser, { status: 201 });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: errorMessage },
-      { status: errorMessage.includes('autenticado') ? 401 : 400 }
+      { status: errorMessage.includes('authenticated') ? 401 : 400 }
     );
   }
 } 

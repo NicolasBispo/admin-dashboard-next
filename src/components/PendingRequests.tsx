@@ -34,7 +34,7 @@ export default function PendingRequests({ teamId }: PendingRequestsProps) {
         setRequests(data.requests);
       }
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
     }
   }, [teamId]);
@@ -59,13 +59,13 @@ export default function PendingRequests({ teamId }: PendingRequestsProps) {
         throw new Error(error.error);
       }
 
-      // Recarregar solicitações
+      // Reload requests
       await loadRequests();
       
-      const actionText = action === 'approve' ? 'aprovada' : 'rejeitada';
-      toast.success(`Solicitação ${actionText} com sucesso!`);
+      const actionText = action === 'approve' ? 'approved' : 'rejected';
+      toast.success(`Request ${actionText} successfully!`);
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -77,11 +77,11 @@ export default function PendingRequests({ teamId }: PendingRequestsProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            Solicitações Pendentes
+            Pending Requests
             <Badge variant="secondary">0</Badge>
           </CardTitle>
           <CardDescription>
-            Não há solicitações pendentes para este time
+            No pending requests for this team
           </CardDescription>
         </CardHeader>
       </Card>
@@ -92,11 +92,11 @@ export default function PendingRequests({ teamId }: PendingRequestsProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          Solicitações Pendentes
+          Pending Requests
           <Badge variant="secondary">{requests.length}</Badge>
         </CardTitle>
         <CardDescription>
-          Gerencie as solicitações de entrada no time
+          Manage team join requests
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -119,7 +119,7 @@ export default function PendingRequests({ teamId }: PendingRequestsProps) {
                     </p>
                   )}
                   <p className="text-xs text-gray-500 mt-2">
-                    Solicitado em: {new Date(request.createdAt).toLocaleDateString()}
+                    Requested on: {new Date(request.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="flex space-x-2 ml-4">
@@ -128,7 +128,7 @@ export default function PendingRequests({ teamId }: PendingRequestsProps) {
                     onClick={() => handleRequestAction(request.id, 'approve')}
                     disabled={loading}
                   >
-                    Aprovar
+                    Approve
                   </Button>
                   <Button
                     size="sm"
@@ -136,7 +136,7 @@ export default function PendingRequests({ teamId }: PendingRequestsProps) {
                     onClick={() => handleRequestAction(request.id, 'reject')}
                     disabled={loading}
                   >
-                    Rejeitar
+                    Reject
                   </Button>
                 </div>
               </div>

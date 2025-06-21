@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Não autorizado.' },
+        { error: 'Not authorized.' },
         { status: 401 }
       );
     }
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const requests = await getUserTeamRequests(user.id);
     return NextResponse.json({ requests });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: errorMessage },
       { status: 500 }
@@ -32,7 +32,7 @@ export async function POST(_request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Não autorizado.' },
+        { error: 'Not authorized.' },
         { status: 401 }
       );
     }
@@ -41,7 +41,7 @@ export async function POST(_request: NextRequest) {
 
     if (!teamId) {
       return NextResponse.json(
-        { error: 'ID do time é obrigatório.' },
+        { error: 'Team ID is required.' },
         { status: 400 }
       );
     }
@@ -54,10 +54,10 @@ export async function POST(_request: NextRequest) {
 
     return NextResponse.json({ request });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: errorMessage },
-      { status: 400 }
+      { status: 500 }
     );
   }
 } 

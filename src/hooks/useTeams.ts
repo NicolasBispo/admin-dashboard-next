@@ -108,7 +108,7 @@ export const useCreateTeamRequest = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userRequests'] });
-      toast.success('Solicitação enviada com sucesso! Aguarde a aprovação do líder do time.');
+      toast.success('Request sent successfully! Wait for team leader approval.');
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -137,7 +137,7 @@ export const useCreateTeam = () => {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['teams'] });
-      toast.success(`Time "${data.team.name}" criado com sucesso!`);
+      toast.success(`Team "${data.team.name}" created successfully!`);
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -166,7 +166,7 @@ export const useAcceptInvite = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userInvites'] });
-      toast.success('Convite aceito com sucesso!');
+      toast.success('Invite accepted successfully!');
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -195,7 +195,7 @@ export const useDeclineInvite = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userInvites'] });
-      toast.success('Convite recusado.');
+      toast.success('Invite declined.');
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -224,7 +224,7 @@ export const useCancelRequest = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userRequests'] });
-      toast.success('Solicitação cancelada.');
+      toast.success('Request canceled.');
     },
     onError: (error: Error) => {
       toast.error(error.message);

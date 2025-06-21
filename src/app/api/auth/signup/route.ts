@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
 
     if (!email || !password || !name) {
       return NextResponse.json(
-        { error: 'Email, senha e nome são obrigatórios.' },
+        { error: 'Email, password and name are required.' },
         { status: 400 }
       );
     }
@@ -16,10 +16,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ user });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: errorMessage },
-      { status: 400 }
+      { status: 500 }
     );
   }
 } 

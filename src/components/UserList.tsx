@@ -29,9 +29,9 @@ interface UserListProps {
 
 const roleLabels = {
   'SUPER_ADMIN': 'Super Admin',
-  'ADMIN': 'Administrador',
-  'MANAGER': 'Gerente',
-  'USER': 'Usuário',
+  'ADMIN': 'Administrator',
+  'MANAGER': 'Manager',
+  'USER': 'User',
 };
 
 const roleColors = {
@@ -54,7 +54,7 @@ export default function UserList({ teamId }: UserListProps) {
     role: '',
   });
 
-  // Verificar se o usuário atual pode editar usuários
+  // Check if current user can edit users
   const canEditUsers = currentUser && ['SUPER_ADMIN', 'ADMIN'].includes(currentUser.role);
 
   const fetchUsers = async () => {
@@ -62,13 +62,13 @@ export default function UserList({ teamId }: UserListProps) {
       setLoading(true);
       const response = await fetch('/api/users');
       if (!response.ok) {
-        throw new Error('Erro ao carregar usuários');
+        throw new Error('Error loading users');
       }
       const data = await response.json();
       setUsers(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro desconhecido');
-      toast.error('Erro ao carregar usuários');
+      setError(err instanceof Error ? err.message : 'Unknown error');
+      toast.error('Error loading users');
     } finally {
       setLoading(false);
     }
@@ -102,15 +102,14 @@ export default function UserList({ teamId }: UserListProps) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Erro ao atualizar usuário');
+        throw new Error(errorData.error || 'Error updating user');
       }
 
-      toast.success('Usuário atualizado com sucesso!');
+      toast.success('User updated successfully!');
+      await fetchUsers();
       setIsEditDialogOpen(false);
-      setEditingUser(null);
-      fetchUsers(); // Recarregar lista
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Erro ao atualizar usuário');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Error updating user');
     }
   };
 
@@ -126,18 +125,18 @@ export default function UserList({ teamId }: UserListProps) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Erro ao alterar status do usuário');
+        throw new Error(errorData.error || 'Error changing user status');
       }
 
-      toast.success(`Usuário ${currentStatus ? 'desativado' : 'ativado'} com sucesso!`);
-      fetchUsers(); // Recarregar lista
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Erro ao alterar status do usuário');
+      toast.success(`User ${currentStatus ? 'deactivated' : 'activated'} successfully!`);
+      await fetchUsers();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Error changing user status');
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -148,11 +147,11 @@ export default function UserList({ teamId }: UserListProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+          <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            <span>Lista de Usuários</span>
+            <span>User List</span>
           </CardTitle>
-          <CardDescription>Carregando usuários...</CardDescription>
+          <CardDescription>Loading users...</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex justify-center py-8">
@@ -167,16 +166,18 @@ export default function UserList({ teamId }: UserListProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+          <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            <span>Lista de Usuários</span>
+            <span>User List</span>
           </CardTitle>
+          <CardDescription>
+            <p className="text-red-600 mb-4">{error}</p>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <p className="text-red-600 mb-4">{error}</p>
             <Button onClick={fetchUsers} variant="outline">
-              Tentar Novamente
+              Try Again
             </Button>
           </div>
         </CardContent>
@@ -188,31 +189,31 @@ export default function UserList({ teamId }: UserListProps) {
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+          <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            <span>Lista de Usuários</span>
+            <span>User List</span>
           </CardTitle>
           <CardDescription>
-            {users.length} usuário{users.length !== 1 ? 's' : ''} no time
+            {users.length} user{users.length !== 1 ? 's' : ''} in the team
           </CardDescription>
         </CardHeader>
         <CardContent>
           {users.length === 0 ? (
             <div className="text-center py-8">
               <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">Nenhum usuário encontrado</p>
+              <p className="text-gray-500">No users found</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nome</TableHead>
+                    <TableHead>Name</TableHead>
                     <TableHead>Email</TableHead>
-                    <TableHead>Cargo</TableHead>
+                    <TableHead>Role</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Data de Criação</TableHead>
-                    <TableHead>Ações</TableHead>
+                    <TableHead>Creation Date</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -227,7 +228,7 @@ export default function UserList({ teamId }: UserListProps) {
                       </TableCell>
                       <TableCell>
                         <Badge variant={user.isActive ? "default" : "secondary"}>
-                          {user.isActive ? 'Ativo' : 'Inativo'}
+                          {user.isActive ? 'Active' : 'Inactive'}
                         </Badge>
                       </TableCell>
                       <TableCell>{formatDate(user.createdAt)}</TableCell>
@@ -270,14 +271,14 @@ export default function UserList({ teamId }: UserListProps) {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Editar Usuário</DialogTitle>
+            <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>
-              Atualize as informações do usuário
+              Update user information
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-name">Nome</Label>
+              <Label htmlFor="edit-name">Name</Label>
               <Input
                 id="edit-name"
                 value={editFormData.name}
@@ -294,19 +295,19 @@ export default function UserList({ teamId }: UserListProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-role">Cargo</Label>
+              <Label htmlFor="edit-role">Role</Label>
               <Select
                 value={editFormData.role}
                 onValueChange={(value) => setEditFormData({ ...editFormData, role: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecione o cargo" />
+                  <SelectValue placeholder="Select role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="USER">Usuário</SelectItem>
-                  <SelectItem value="MANAGER">Gerente</SelectItem>
-                  <SelectItem value="ADMIN">Administrador</SelectItem>
-                  <SelectItem value="SUPER_ADMIN">Super Administrador</SelectItem>
+                  <SelectItem value="USER">User</SelectItem>
+                  <SelectItem value="MANAGER">Manager</SelectItem>
+                  <SelectItem value="ADMIN">Administrator</SelectItem>
+                  <SelectItem value="SUPER_ADMIN">Super Administrator</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -315,10 +316,10 @@ export default function UserList({ teamId }: UserListProps) {
                 variant="outline"
                 onClick={() => setIsEditDialogOpen(false)}
               >
-                Cancelar
+                Cancel
               </Button>
               <Button onClick={handleUpdateUser}>
-                Salvar Alterações
+                Save Changes
               </Button>
             </div>
           </div>

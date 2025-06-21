@@ -25,7 +25,7 @@ export default function LoginPage() {
       await login(email, password);
       router.push('/dashboard');
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -38,7 +38,7 @@ export default function LoginPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Admin Dashboard</CardTitle>
           <CardDescription className="text-center">
-            Entre com suas credenciais para acessar o sistema
+            Enter your credentials to access the system
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -48,14 +48,14 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="seu@email.com"
+                placeholder="your@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -71,17 +71,17 @@ export default function LoginPage() {
               </div>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
           <div className="mt-4 text-sm text-gray-600 text-center space-y-2">
-            <p>Credenciais de teste:</p>
+            <p>Test credentials:</p>
             <p>Email: admin@example.com</p>
-            <p>Senha: admin123</p>
+            <p>Password: admin123</p>
             <div className="pt-2 border-t">
-              <p>Não tem uma conta?</p>
+              <p>Don't have an account?</p>
               <a href="/signup" className="text-blue-600 hover:underline">
-                Criar conta
+                Create account
               </a>
             </div>
           </div>

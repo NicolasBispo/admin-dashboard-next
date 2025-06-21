@@ -61,10 +61,10 @@ export default function SignupPage() {
   useEffect(() => {
     if (user) {
       if (user.teamId) {
-        // Usuário já está em um time, redirecionar para dashboard
+        // User is already in a team, redirect to dashboard
         router.push('/dashboard');
       } else {
-        // Usuário não está em um time, ir para seleção de time
+        // User is not in a team, go to team selection
         setStep('team-selection');
       }
     }
@@ -76,16 +76,16 @@ export default function SignupPage() {
     setError('');
 
     if (password !== confirmPassword) {
-      setError('As senhas não coincidem.');
+      setError('Passwords do not match.');
       setLoading(false);
       return;
     }
 
     try {
       await signup(email, password, name);
-      // O useEffect vai detectar o usuário e redirecionar para seleção de time
+      // The useEffect will detect the user and redirect to team selection
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -94,7 +94,7 @@ export default function SignupPage() {
 
   const handleJoinTeam = async () => {
     if (!selectedTeam) {
-      setError('Selecione um time.');
+      setError('Please select a team.');
       return;
     }
 
@@ -109,14 +109,14 @@ export default function SignupPage() {
       setSelectedTeam('');
       setTeamMessage('');
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
     }
   };
 
   const handleCreateTeam = async () => {
     if (!newTeamName.trim()) {
-      setError('Nome do time é obrigatório.');
+      setError('Team name is required.');
       return;
     }
 
@@ -132,7 +132,7 @@ export default function SignupPage() {
       setNewTeamName('');
       setNewTeamDescription('');
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
     }
   };
@@ -142,7 +142,7 @@ export default function SignupPage() {
       await acceptInviteMutation.mutateAsync(inviteId);
       router.push('/dashboard');
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
     }
   };
@@ -151,7 +151,7 @@ export default function SignupPage() {
     try {
       await declineInviteMutation.mutateAsync(inviteId);
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
     }
   };
@@ -160,7 +160,7 @@ export default function SignupPage() {
     try {
       await cancelRequestMutation.mutateAsync(requestId);
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
     }
   };
@@ -170,7 +170,7 @@ export default function SignupPage() {
       await logout();
       router.push('/login');
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
     }
   };
@@ -180,19 +180,19 @@ export default function SignupPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Criar Conta</CardTitle>
+            <CardTitle className="text-2xl text-center">Create Account</CardTitle>
             <CardDescription className="text-center">
-              Crie sua conta para acessar o sistema
+              Create your account to access the system
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nome</Label>
+                <Label htmlFor="name">Name</Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Seu nome completo"
+                  placeholder="Your full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -203,14 +203,14 @@ export default function SignupPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="seu@email.com"
+                  placeholder="your@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -221,7 +221,7 @@ export default function SignupPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -237,13 +237,13 @@ export default function SignupPage() {
                 </div>
               )}
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Criando conta...' : 'Criar Conta'}
+                {loading ? 'Creating account...' : 'Create Account'}
               </Button>
             </form>
             <div className="mt-4 text-sm text-gray-600 text-center">
-              <p>Já tem uma conta?</p>
+              <p>Already have an account?</p>
               <a href="/login" className="text-blue-600 hover:underline">
-                Faça login
+                Sign in
               </a>
             </div>
           </CardContent>
@@ -263,22 +263,22 @@ export default function SignupPage() {
               onClick={handleLogout}
               className="text-gray-600 hover:text-gray-800"
             >
-              Sair
+              Logout
             </Button>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Bem-vindo!</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Welcome!</h1>
           <p className="text-gray-600 mt-2">
-            Agora você precisa se juntar a um time ou criar um novo.
+            Now you need to join a team or create a new one.
           </p>
         </div>
 
-        {/* Convites Pendentes */}
+        {/* Pending Invites */}
         {userInvites.length > 0 && (
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="text-xl">Convites Pendentes</CardTitle>
+              <CardTitle className="text-xl">Pending Invites</CardTitle>
               <CardDescription>
-                Você tem convites para participar de times
+                You have invites to join teams
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -289,7 +289,7 @@ export default function SignupPage() {
                       <div>
                         <h3 className="font-semibold">{invite.team.name}</h3>
                         <p className="text-sm text-gray-600">
-                          Convite de: {invite.sender.name}
+                          Invite from: {invite.sender.name}
                         </p>
                         {invite.message && (
                           <p className="text-sm text-gray-600 mt-1">
@@ -303,7 +303,7 @@ export default function SignupPage() {
                           onClick={() => handleAcceptInvite(invite.id)}
                           disabled={acceptInviteMutation.isPending}
                         >
-                          {acceptInviteMutation.isPending ? 'Aceitando...' : 'Aceitar'}
+                          {acceptInviteMutation.isPending ? 'Accepting...' : 'Accept'}
                         </Button>
                         <Button
                           size="sm"
@@ -311,7 +311,7 @@ export default function SignupPage() {
                           onClick={() => handleDeclineInvite(invite.id)}
                           disabled={declineInviteMutation.isPending}
                         >
-                          {declineInviteMutation.isPending ? 'Recusando...' : 'Recusar'}
+                          {declineInviteMutation.isPending ? 'Declining...' : 'Decline'}
                         </Button>
                       </div>
                     </div>
@@ -322,13 +322,13 @@ export default function SignupPage() {
           </Card>
         )}
 
-        {/* Solicitações Pendentes */}
+        {/* Pending Requests */}
         {userRequests.length > 0 && (
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="text-xl">Solicitações Pendentes</CardTitle>
+              <CardTitle className="text-xl">Pending Requests</CardTitle>
               <CardDescription>
-                Suas solicitações para entrar em times
+                Your requests to join teams
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -344,7 +344,7 @@ export default function SignupPage() {
                           </p>
                         )}
                         <p className="text-xs text-gray-500 mt-1">
-                          Enviada em: {new Date(request.createdAt).toLocaleDateString()}
+                          Sent on: {new Date(request.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                       <Button
@@ -353,7 +353,7 @@ export default function SignupPage() {
                         onClick={() => handleCancelRequest(request.id)}
                         disabled={cancelRequestMutation.isPending}
                       >
-                        {cancelRequestMutation.isPending ? 'Cancelando...' : 'Cancelar'}
+                        {cancelRequestMutation.isPending ? 'Canceling...' : 'Cancel'}
                       </Button>
                     </div>
                   </div>
@@ -364,17 +364,17 @@ export default function SignupPage() {
         )}
 
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Juntar-se a um Time */}
+          {/* Join a Team */}
           <Card>
             <CardHeader>
-              <CardTitle>Juntar-se a um Time</CardTitle>
+              <CardTitle>Join a Team</CardTitle>
               <CardDescription>
-                Solicite entrada em um time existente
+                Request to join an existing team
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="team">Selecionar Time</Label>
+                <Label htmlFor="team">Select Team</Label>
                 <select
                   id="team"
                   value={selectedTeam}
@@ -382,19 +382,19 @@ export default function SignupPage() {
                   className="w-full p-2 border rounded-md mt-1"
                   disabled={teamsLoading}
                 >
-                  <option value="">Escolha um time...</option>
+                  <option value="">Choose a team...</option>
                   {teams.map((team) => (
                     <option key={team.id} value={team.id}>
-                      {team.name} ({team._count.users} membros)
+                      {team.name} ({team._count.users} members)
                     </option>
                   ))}
                 </select>
               </div>
               <div>
-                <Label htmlFor="message">Mensagem (opcional)</Label>
+                <Label htmlFor="message">Message (optional)</Label>
                 <Textarea
                   id="message"
-                  placeholder="Conte um pouco sobre você e por que gostaria de entrar no time..."
+                  placeholder="Tell us a bit about yourself and why you'd like to join the team..."
                   value={teamMessage}
                   onChange={(e) => setTeamMessage(e.target.value)}
                   className="mt-1"
@@ -406,48 +406,48 @@ export default function SignupPage() {
                 disabled={!selectedTeam || createTeamRequestMutation.isPending}
                 className="w-full"
               >
-                {createTeamRequestMutation.isPending ? 'Enviando...' : 'Solicitar Entrada'}
+                {createTeamRequestMutation.isPending ? 'Sending...' : 'Request to Join'}
               </Button>
             </CardContent>
           </Card>
 
-          {/* Criar Novo Time */}
+          {/* Create New Team */}
           <Card>
             <CardHeader>
-              <CardTitle>Criar Novo Time</CardTitle>
+              <CardTitle>Create New Team</CardTitle>
               <CardDescription>
-                Crie seu próprio time e convide outros membros
+                Create your own team and invite other members
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Dialog open={showCreateTeam} onOpenChange={setShowCreateTeam}>
                 <DialogTrigger asChild>
-                  <Button className="w-full">Criar Time</Button>
+                  <Button className="w-full">Create Team</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Criar Novo Time</DialogTitle>
+                    <DialogTitle>Create New Team</DialogTitle>
                     <DialogDescription>
-                      Preencha as informações do seu time
+                      Fill in your team's information
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="newTeamName">Nome do Time</Label>
+                      <Label htmlFor="newTeamName">Team Name</Label>
                       <Input
                         id="newTeamName"
                         value={newTeamName}
                         onChange={(e) => setNewTeamName(e.target.value)}
-                        placeholder="Nome do seu time"
+                        placeholder="Your team name"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="newTeamDescription">Descrição (opcional)</Label>
+                      <Label htmlFor="newTeamDescription">Description (optional)</Label>
                       <Textarea
                         id="newTeamDescription"
                         value={newTeamDescription}
                         onChange={(e) => setNewTeamDescription(e.target.value)}
-                        placeholder="Descreva o propósito do seu time..."
+                        placeholder="Describe your team's purpose..."
                         rows={3}
                       />
                     </div>
@@ -462,14 +462,14 @@ export default function SignupPage() {
                         disabled={!newTeamName.trim() || createTeamMutation.isPending}
                         className="flex-1"
                       >
-                        {createTeamMutation.isPending ? 'Criando...' : 'Criar Time'}
+                        {createTeamMutation.isPending ? 'Creating...' : 'Create Team'}
                       </Button>
                       <Button
                         variant="outline"
                         onClick={() => setShowCreateTeam(false)}
                         className="flex-1"
                       >
-                        Cancelar
+                        Cancel
                       </Button>
                     </div>
                   </div>
