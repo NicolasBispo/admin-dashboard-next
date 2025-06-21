@@ -34,7 +34,7 @@ export default function SignupPage() {
   const [newTeamName, setNewTeamName] = useState('');
   const [newTeamDescription, setNewTeamDescription] = useState('');
 
-  const { signup, user, logout } = useAuth();
+  const { signup, user, logout, login } = useAuth();
   const router = useRouter();
 
   // TanStack Query hooks - only enabled when user is authenticated and in team-selection step
@@ -83,7 +83,9 @@ export default function SignupPage() {
 
     try {
       await signup(email, password, name);
-      // The useEffect will detect the user and redirect to team selection
+      // Após o signup bem-sucedido, fazer login para criar a sessão
+      await login(email, password);
+      // O useEffect detectará o usuário e redirecionará para seleção de time
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
@@ -394,7 +396,7 @@ export default function SignupPage() {
                 <Label htmlFor="message">Message (optional)</Label>
                 <Textarea
                   id="message"
-                  placeholder="Tell us a bit about yourself and why you'd like to join the team..."
+                  placeholder="Tell us a bit about yourself and why you&apos;d like to join the team..."
                   value={teamMessage}
                   onChange={(e) => setTeamMessage(e.target.value)}
                   className="mt-1"
@@ -412,7 +414,7 @@ export default function SignupPage() {
           </Card>
 
           {/* Create New Team */}
-          <Card>
+          <Card className='h-fit'>
             <CardHeader>
               <CardTitle>Create New Team</CardTitle>
               <CardDescription>
@@ -428,7 +430,7 @@ export default function SignupPage() {
                   <DialogHeader>
                     <DialogTitle>Create New Team</DialogTitle>
                     <DialogDescription>
-                      Fill in your team's information
+                      Fill in your team&apos;s information
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
