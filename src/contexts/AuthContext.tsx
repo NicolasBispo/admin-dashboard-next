@@ -1,7 +1,7 @@
 'use client';
 
-import { TeamRole } from '@/generated/prisma';
-import { createContext, useContext, useEffect, useState, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
+import { TeamRole } from '@/lib/prisma';
 
 interface Team {
   id: string;

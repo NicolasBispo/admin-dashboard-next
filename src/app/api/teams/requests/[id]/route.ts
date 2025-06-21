@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { approveTeamRequest, rejectTeamRequest, cancelTeamRequest, canManageTeamRequests } from '@/services/teamService';
 import { getSessionUser } from '@/services/authService';
-import { PrismaClient } from '@/generated/prisma';
+import { PrismaClient } from '@/lib/prisma';
 
 const prisma = new PrismaClient();
 

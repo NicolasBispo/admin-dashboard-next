@@ -1,4 +1,4 @@
-import { PrismaClient, AuditAction, Prisma } from '@/generated/prisma';
+import { PrismaClient, AuditAction, Prisma } from '@/lib/prisma';
 
 const prisma = new PrismaClient();
 
