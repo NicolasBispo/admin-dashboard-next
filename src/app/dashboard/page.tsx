@@ -4,15 +4,19 @@ import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, LogOut, User, Building2 } from 'lucide-react';
+import { Users, LogOut, User, Building2, History } from 'lucide-react';
 import AddUserForm from '@/components/AddUserForm';
 import PendingRequests from '@/components/PendingRequests';
 import UserList from '@/components/UserList';
+import TotalUserList from '@/components/TotalUserList';
+import NotificationCenter from '@/components/NotificationCenter';
+import AuditLogViewer from '@/components/AuditLogViewer';
 import { useState } from 'react';
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
   const [showUserList, setShowUserList] = useState(false);
+  const [showAuditLogs, setShowAuditLogs] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -28,8 +32,12 @@ export default function DashboardPage() {
     setShowUserList(!showUserList);
   };
 
+  const handleShowAuditLogs = () => {
+    setShowAuditLogs(!showAuditLogs);
+  };
+
   return (
-    <ProtectedRoute requiredRoles={['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'USER']}>
+    <ProtectedRoute requiredRoles={['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'USER']} requireTeam={true}>
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <header className="bg-white shadow-sm border-b">
@@ -60,12 +68,34 @@ export default function DashboardPage() {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
+            {/* Notification Center - Sempre visível */}
+            <div className="mb-6">
+              <NotificationCenter />
+            </div>
+
             {/* User List Section */}
+            
             {showUserList && user?.teamId && (
               <div className="mb-6">
                 <UserList teamId={user.teamId} />
               </div>
             )}
+
+            {
+              showUserList && user?.role === 'SUPER_ADMIN' && (
+                <div className="mb-6">
+                  <TotalUserList  />
+                </div>
+              )
+            }
+
+            {/* Audit Logs Section - Apenas para admins */}
+            {showAuditLogs && ['SUPER_ADMIN', 'ADMIN'].includes(user?.role || '') && (
+              <div className="mb-6">
+                <AuditLogViewer />
+              </div>
+            )}
+          
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
               {/* Card of Statistics */}
@@ -91,7 +121,7 @@ export default function DashboardPage() {
                 <CardHeader>
                   <CardTitle>Quick Actions</CardTitle>
                   <CardDescription>
-                    Manage your team's users
+                    Manage your team&apos;s users
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
@@ -105,6 +135,16 @@ export default function DashboardPage() {
                   </Button>
                   {(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN') && (
                     <AddUserForm onSuccess={handleAddUserSuccess} />
+                  )}
+                  {['SUPER_ADMIN', 'ADMIN'].includes(user?.role || '') && (
+                    <Button 
+                      className="w-full" 
+                      variant="outline"
+                      onClick={handleShowAuditLogs}
+                    >
+                      <History className="h-4 w-4 mr-2" />
+                      {showAuditLogs ? 'Hide Audit Logs' : 'View Audit Logs'}
+                    </Button>
                   )}
                 </CardContent>
               </Card>
@@ -146,6 +186,12 @@ export default function DashboardPage() {
                         {user?.role}
                       </p>
                     </div>
+                    <div>
+                      <span className="text-sm font-medium">Your TeamRole:</span>
+                      <p className="text-sm text-muted-foreground">
+                        {user?.team?.teamRole?.name || 'No team role'}
+                      </p>
+                    </div>
                     {user?.team && (
                       <div>
                         <span className="text-sm font-medium">Created by:</span>
@@ -171,9 +217,9 @@ export default function DashboardPage() {
               <div className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Times Created by You</CardTitle>
+                    <CardTitle>Teams created by you</CardTitle>
                     <CardDescription>
-                      Times you created and manage
+                      Teams you created and manage
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
