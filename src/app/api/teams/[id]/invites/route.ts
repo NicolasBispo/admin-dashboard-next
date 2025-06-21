@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getTeamInvites, getTeamById, canManageTeamRequests } from '@/services/teamService';
+import { getTeamInvites, getTeamById } from '@/services/teamService';
 import { getSessionUser } from '@/services/authService';
 
 export async function GET(
