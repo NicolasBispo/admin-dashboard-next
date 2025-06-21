@@ -5,7 +5,7 @@ import { getAuthenticatedUser, requireRole } from '@/lib/auth';
 export async function GET(req: NextRequest) {
   try {
     const user = await getAuthenticatedUser(req);
-    requireRole(user, ['SUPER_ADMIN', 'ADMIN', 'MANAGER']);
+    requireRole(user, ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'USER']);
     
     if (!user.teamId) {
       return NextResponse.json(

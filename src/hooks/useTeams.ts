@@ -43,7 +43,7 @@ interface TeamInvite {
 }
 
 // Fetch teams
-export const useTeams = () => {
+export const useTeams = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['teams'],
     queryFn: async (): Promise<{ teams: Team[] }> => {
@@ -53,11 +53,12 @@ export const useTeams = () => {
       }
       return response.json();
     },
+    enabled: options?.enabled ?? true,
   });
 };
 
 // Fetch user requests
-export const useUserRequests = () => {
+export const useUserRequests = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['userRequests'],
     queryFn: async (): Promise<{ requests: TeamRequest[] }> => {
@@ -67,11 +68,12 @@ export const useUserRequests = () => {
       }
       return response.json();
     },
+    enabled: options?.enabled ?? true,
   });
 };
 
 // Fetch user invites
-export const useUserInvites = () => {
+export const useUserInvites = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ['userInvites'],
     queryFn: async (): Promise<{ invites: TeamInvite[] }> => {
@@ -81,6 +83,7 @@ export const useUserInvites = () => {
       }
       return response.json();
     },
+    enabled: options?.enabled ?? true,
   });
 };
 

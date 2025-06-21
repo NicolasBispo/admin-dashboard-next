@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { approveTeamRequest, rejectTeamRequest, cancelTeamRequest } from '@/services/teamService';
+import { approveTeamRequest, rejectTeamRequest, cancelTeamRequest, canManageTeamRequests } from '@/services/teamService';
 import { getSessionUser } from '@/services/authService';
+import { PrismaClient } from '@/generated/prisma';
+
+const prisma = new PrismaClient();
 
 export async function PUT(
   request: NextRequest,
@@ -24,6 +27,29 @@ export async function PUT(
       return NextResponse.json(
         { error: 'Ação inválida.' },
         { status: 400 }
+      );
+    }
+
+    // Buscar a solicitação para obter o teamId
+    const teamRequest = await prisma.teamRequest.findUnique({
+      where: { id },
+      select: { teamId: true },
+    });
+
+    if (!teamRequest) {
+      return NextResponse.json(
+        { error: 'Solicitação não encontrada.' },
+        { status: 404 }
+      );
+    }
+
+    // Verificar se o usuário tem permissão para gerenciar solicitações
+    const hasPermission = await canManageTeamRequests(user.id, teamRequest.teamId);
+    
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: 'Acesso negado. Você não tem permissão para gerenciar solicitações deste time.' },
+        { status: 403 }
       );
     }
 

@@ -416,4 +416,58 @@ export async function cancelTeamRequest(requestId: string) {
     where: { id: requestId },
     data: { status: 'REJECTED' },
   });
+}
+
+// Função para verificar se um usuário tem permissão para gerenciar convites e solicitações
+export async function canManageTeamRequests(userId: string, teamId: string): Promise<boolean> {
+  // Verificar se o usuário é o criador do time
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+    select: { createdBy: true },
+  });
+
+  if (!team) {
+    return false;
+  }
+
+  if (team.createdBy === userId) {
+    return true;
+  }
+
+  // Verificar se o usuário é membro do time e tem cargos de liderança
+  const userTeamRoles = await prisma.userTeamRole.findMany({
+    where: {
+      userId,
+      teamRole: {
+        teamId,
+        isActive: true,
+      },
+    },
+    include: {
+      teamRole: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  // Lista de cargos que podem gerenciar convites e solicitações
+  const managementRoles = [
+    'Tech Lead',
+    'Design Lead', 
+    'Marketing Manager',
+    'Team Lead',
+    'Manager',
+    'Lead',
+    'Coordinator',
+    'Supervisor',
+  ];
+
+  // Verificar se o usuário tem algum cargo de liderança
+  return userTeamRoles.some(userRole => 
+    managementRoles.some(role => 
+      userRole.teamRole.name.toLowerCase().includes(role.toLowerCase())
+    )
+  );
 } 

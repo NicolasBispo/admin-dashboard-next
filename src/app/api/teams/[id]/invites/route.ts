@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getTeamRequests, getTeamById, canManageTeamRequests } from '@/services/teamService';
+import { getTeamInvites, getTeamById, canManageTeamRequests } from '@/services/teamService';
 import { getSessionUser } from '@/services/authService';
 
 export async function GET(
@@ -27,18 +27,18 @@ export async function GET(
       );
     }
 
-    // Verificar se o usuário tem permissão para gerenciar solicitações
+    // Verificar se o usuário tem permissão para gerenciar convites
     const hasPermission = await canManageTeamRequests(user.id, teamId);
     
     if (!hasPermission) {
       return NextResponse.json(
-        { error: 'Acesso negado. Você não tem permissão para gerenciar solicitações deste time.' },
+        { error: 'Acesso negado. Você não tem permissão para gerenciar convites deste time.' },
         { status: 403 }
       );
     }
 
-    const requests = await getTeamRequests(teamId);
-    return NextResponse.json({ requests });
+    const invites = await getTeamInvites(teamId);
+    return NextResponse.json({ invites });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
     return NextResponse.json(

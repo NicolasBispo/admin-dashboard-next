@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createTeamInvite, getUserTeamInvites } from '@/services/teamService';
+import { createTeamInvite, getUserTeamInvites, canManageTeamRequests } from '@/services/teamService';
 import { getSessionUser } from '@/services/authService';
 
 export async function GET(request: NextRequest) {
@@ -43,6 +43,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'ID do time e ID do usuário são obrigatórios.' },
         { status: 400 }
+      );
+    }
+
+    // Verificar se o usuário tem permissão para gerenciar convites
+    const hasPermission = await canManageTeamRequests(user.id, teamId);
+    
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: 'Acesso negado. Você não tem permissão para criar convites neste time.' },
+        { status: 403 }
       );
     }
 

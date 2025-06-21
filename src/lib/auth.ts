@@ -4,10 +4,10 @@ import { getSessionUser } from '@/services/authService';
 interface Team {
   id: string;
   name: string;
-  description?: string;
+  description: string | null;
   isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   creator: {
     id: string;
     name: string;
@@ -21,7 +21,7 @@ interface Team {
 interface CreatedTeam {
   id: string;
   name: string;
-  description?: string;
+  description: string | null;
   isActive: boolean;
   _count: {
     users: number;
@@ -49,6 +49,7 @@ export async function getAuthenticatedUser(req: NextRequest) {
 }
 
 export function requireRole(user: User, allowedRoles: string[]) {
+  console.log('user', user);
   if (!allowedRoles.includes(user.role)) {
     throw new Error('Acesso negado');
   }

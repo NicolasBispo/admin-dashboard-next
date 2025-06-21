@@ -34,13 +34,19 @@ export default function SignupPage() {
   const [newTeamName, setNewTeamName] = useState('');
   const [newTeamDescription, setNewTeamDescription] = useState('');
 
-  const { signup, user } = useAuth();
+  const { signup, user, logout } = useAuth();
   const router = useRouter();
 
-  // TanStack Query hooks
-  const { data: teamsData, isLoading: teamsLoading } = useTeams();
-  const { data: requestsData } = useUserRequests();
-  const { data: invitesData } = useUserInvites();
+  // TanStack Query hooks - only enabled when user is authenticated and in team-selection step
+  const { data: teamsData, isLoading: teamsLoading } = useTeams({
+    enabled: step === 'team-selection' && !!user
+  });
+  const { data: requestsData } = useUserRequests({
+    enabled: step === 'team-selection' && !!user
+  });
+  const { data: invitesData } = useUserInvites({
+    enabled: step === 'team-selection' && !!user
+  });
   
   const createTeamRequestMutation = useCreateTeamRequest();
   const createTeamMutation = useCreateTeam();
@@ -159,6 +165,16 @@ export default function SignupPage() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push('/login');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      setError(errorMessage);
+    }
+  };
+
   if (step === 'signup') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -240,6 +256,16 @@ export default function SignupPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <div></div>
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+              className="text-gray-600 hover:text-gray-800"
+            >
+              Sair
+            </Button>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900">Bem-vindo!</h1>
           <p className="text-gray-600 mt-2">
             Agora você precisa se juntar a um time ou criar um novo.

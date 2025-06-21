@@ -59,6 +59,13 @@ export async function PUT(
       );
     }
 
+    if (!['SUPER_ADMIN', 'ADMIN'].includes(user.role)) {
+      return NextResponse.json(
+        { error: 'Acesso negado. Apenas administradores podem editar usuários.' },
+        { status: 403 }
+      );
+    }
+
     if (!user.teamId) {
       return NextResponse.json(
         { error: 'Usuário não está em um time.' },

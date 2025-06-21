@@ -7,9 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Users, LogOut, User, Building2 } from 'lucide-react';
 import AddUserForm from '@/components/AddUserForm';
 import PendingRequests from '@/components/PendingRequests';
+import UserList from '@/components/UserList';
+import { useState } from 'react';
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
+  const [showUserList, setShowUserList] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -19,6 +22,10 @@ export default function DashboardPage() {
     // Aqui você pode adicionar lógica para atualizar a lista de usuários
     // Por exemplo, recarregar dados ou mostrar uma notificação
     console.log('Usuário criado com sucesso!');
+  };
+
+  const handleShowUsers = () => {
+    setShowUserList(!showUserList);
   };
 
   return (
@@ -53,6 +60,13 @@ export default function DashboardPage() {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
+            {/* Seção de Lista de Usuários */}
+            {showUserList && user?.teamId && (
+              <div className="mb-6">
+                <UserList teamId={user.teamId} />
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
               {/* Card de Estatísticas */}
               <Card>
@@ -81,9 +95,13 @@ export default function DashboardPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button className="w-full" variant="outline">
+                  <Button 
+                    className="w-full" 
+                    variant="outline"
+                    onClick={handleShowUsers}
+                  >
                     <Users className="h-4 w-4 mr-2" />
-                    Ver Usuários
+                    {showUserList ? 'Ocultar Usuários' : 'Ver Usuários'}
                   </Button>
                   {(user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN') && (
                     <AddUserForm onSuccess={handleAddUserSuccess} />
