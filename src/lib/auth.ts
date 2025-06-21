@@ -1,29 +1,40 @@
 import { NextRequest } from 'next/server';
 import { getSessionUser } from '@/services/authService';
 
+interface TeamRolePartial {
+  id?: string;
+  teamId?: string;
+  name?: string;
+  isActive?: boolean;
+  color?: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 interface Team {
-  id: string;
-  name: string;
-  description: string | null;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  creator: {
+  id?: string;
+  name?: string;
+  description?: string | null;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  creator?: {
     id: string;
     name: string;
     email: string;
   };
-  _count: {
+  _count?: {
     users: number;
   };
+  teamRole?: TeamRolePartial;
 }
 
 interface CreatedTeam {
-  id: string;
-  name: string;
-  description: string | null;
-  isActive: boolean;
-  _count: {
+  id?: string;
+  name?: string;
+  description?: string | null;
+  isActive?: boolean;
+  _count?: {
     users: number;
   };
 }
@@ -35,8 +46,9 @@ interface User {
   role: string;
   teamId: string | null;
   isActive: boolean;
-  team?: Team | null;
+  team?: (Team & { teamRole?: TeamRolePartial }) | null;
   createdTeams: CreatedTeam[];
+  teamRoles?: TeamRolePartial[];
 }
 
 export async function getAuthenticatedUser(req: NextRequest) {
