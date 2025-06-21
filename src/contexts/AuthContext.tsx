@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { TeamRole } from '@/generated/prisma';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 
 interface Team {
   id: string;
@@ -38,7 +39,7 @@ interface User {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  team?: Team | null;
+  team?: Team & { teamRole: TeamRole } | null;
   createdTeams: CreatedTeam[];
 }
 
@@ -56,8 +57,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const isCheckingAuth = useRef(false);
 
   const checkAuth = async () => {
+    if (isCheckingAuth.current) {
+      return;
+    }
+    
+    isCheckingAuth.current = true;
+    
     try {
       const response = await fetch('/api/auth/session');
       const data = await response.json();
@@ -67,6 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
     } finally {
       setLoading(false);
+      isCheckingAuth.current = false;
     }
   };
 
@@ -97,8 +106,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error(error.error);
     }
 
-    // Após o signup, fazer login automaticamente
-    await login(email, password);
+    // Após o signup, não fazer login automático
+    // O usuário será redirecionado para a página de signup para selecionar/criar time
   };
 
   const logout = async () => {
