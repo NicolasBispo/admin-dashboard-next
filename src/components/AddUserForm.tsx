@@ -87,7 +87,7 @@ export default function AddUserForm({ onSuccess }: AddUserFormProps) {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className='w-full'>
           <Plus className="h-4 w-4 mr-2" />
           Add User
         </Button>
@@ -96,7 +96,7 @@ export default function AddUserForm({ onSuccess }: AddUserFormProps) {
         <DialogHeader>
           <DialogTitle>Add User</DialogTitle>
           <DialogDescription>
-            Fill in the new user's information
+            Fill in the new user&apos;s information
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
