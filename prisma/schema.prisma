@@ -1,0 +1,164 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      UserRole @default(USER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  teamId   String?
+  team     Team?     @relation("UserTeam", fields: [teamId], references: [id])
+  sessions Session[]
+
+  // Times criados pelo usuário
+  createdTeams Team[]         @relation("TeamCreator")
+  UserTeamRole UserTeamRole[]
+
+  // Convites e solicitações
+  sentInvites     TeamInvite[]  @relation("InviteSender")
+  receivedInvites TeamInvite[]  @relation("InviteReceiver")
+  teamRequests    TeamRequest[] @relation("RequestSender")
+
+  @@map("users")
+}
+
+model Team {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Usuário que criou o time
+  createdBy String
+  creator   User   @relation("TeamCreator", fields: [createdBy], references: [id])
+
+  // Relacionamentos
+  users     User[]     @relation("UserTeam")
+  teamRoles TeamRole[]
+
+  // Convites e solicitações
+  invites  TeamInvite[]  @relation("TeamInvites")
+  requests TeamRequest[] @relation("TeamRequests")
+
+  @@map("teams")
+}
+
+model TeamRole {
+  id        String   @id @default(cuid())
+  name      String // ex: "Desenvolvedor", "Designer", "Product Manager"
+  color     String? // cor para identificação visual
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  teamId String
+  team   Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  users  UserTeamRole[]
+
+  @@map("team_roles")
+}
+
+model UserTeamRole {
+  id         String   @id @default(cuid())
+  userId     String
+  teamRoleId String
+  assignedAt DateTime @default(now())
+
+  // Relacionamentos
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teamRole TeamRole @relation(fields: [teamRoleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, teamRoleId])
+  @@map("user_team_roles")
+}
+
+model TeamInvite {
+  id        String       @id @default(cuid())
+  teamId    String
+  userId    String
+  invitedBy String
+  status    InviteStatus @default(PENDING)
+  message   String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  // Relacionamentos
+  team   Team @relation("TeamInvites", fields: [teamId], references: [id], onDelete: Cascade)
+  user   User @relation("InviteReceiver", fields: [userId], references: [id], onDelete: Cascade)
+  sender User @relation("InviteSender", fields: [invitedBy], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@map("team_invites")
+}
+
+model TeamRequest {
+  id        String        @id @default(cuid())
+  teamId    String
+  userId    String
+  status    RequestStatus @default(PENDING)
+  message   String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  // Relacionamentos
+  team Team @relation("TeamRequests", fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation("RequestSender", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@map("team_requests")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  // Relacionamentos
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+  USER
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
