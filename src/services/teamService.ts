@@ -1,3 +1,4 @@
+import { managementRoles } from '@/lib/managementRoles';
 import { PrismaClient } from '@/lib/prisma';
 
 const prisma = new PrismaClient();
@@ -457,16 +458,6 @@ export async function canManageTeamRequests(userId: string, teamId: string): Pro
   });
 
   // Lista de cargos que podem gerenciar convites e solicitações
-  const managementRoles = [
-    'Tech Lead',
-    'Design Lead', 
-    'Marketing Manager',
-    'Team Lead',
-    'Manager',
-    'Lead',
-    'Coordinator',
-    'Supervisor',
-  ];
 
   console.log('userTeamRoles', userTeamRoles);
 

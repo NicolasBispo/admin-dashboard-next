@@ -138,10 +138,10 @@ export async function getSessionUser(token: string | undefined) {
   
   return {
     ...userSafe,
-    team: {
+    team: userSafe.team && Object.keys(userSafe.team).length > 0 ? {
       ...userSafe.team,
       teamRole: userTeamRoles.find(utr => utr.teamRole.teamId === userSafe.team?.id)?.teamRole
-    },
+    } : null,
     teamRoles: userTeamRoles.map(utr => utr.teamRole)
   };
 } 

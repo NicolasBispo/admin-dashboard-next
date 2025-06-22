@@ -12,6 +12,7 @@ import TotalUserList from '@/components/TotalUserList';
 import NotificationCenter from '@/components/NotificationCenter';
 import AuditLogViewer from '@/components/AuditLogViewer';
 import { useState } from 'react';
+import { managementRoles } from '@/lib/managementRoles';
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
@@ -206,7 +207,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Pending Requests Section - only for team creators */}
-            {user?.teamId && (
+            {user?.teamId && managementRoles.includes(user?.team?.teamRole?.name || '') && (
               <div className="mt-6">
                 <PendingRequests teamId={user.teamId} />
               </div>
